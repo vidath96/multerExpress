@@ -21,11 +21,13 @@ router.post('/fileformsub',upload.single('file'),(req, res, next) => {
   })
 })
 
-router.post('/mulfileformsub',upload.fields('mulfile'),(req, res, next) => {
+router.post('/mulfileformsub',upload.array('mulfile'),(req, res, next) => {
+  
   let oldPath = req.files.path
-  let newPath = `public/images/uploads/${req.file.originalname}${Date.now()}`
-  let mulnewPath = `public/images/uploads/multiple/${req.files.originalname}${Date.now()}`
-  fs.rename(oldPath,newPath,()=>{
+  let newPath = `public/images/uploads/${req.files[0].originalname}${Date.now()}`
+  let mulnewPath = `public/images/uploads/${req.files[1].originalname}${Date.now()}`
+  fs.rename(oldPath,newPath,(err)=>{
+    if(err) throw err
     res.json({
       // field: req.body,
       // image: req.file
@@ -33,5 +35,23 @@ router.post('/mulfileformsub',upload.fields('mulfile'),(req, res, next) => {
     })
   })
 })
+
+// router.post('/mulfileformsub',upload.fields([
+//   { name: 'avatar', maxCount: 1 },
+//   { name: 'gallery', maxCount: 8 }
+// ]),(req, res, next) => {
+  
+//   let oldPath = req.files.path
+//   let newPath = `public/images/uploads/${req.files[0].originalname}${Date.now()}`
+//   let mulnewPath = `public/images/uploads/${req.files[1].originalname}${Date.now()}`
+//   fs.rename(oldPath,newPath,(err)=>{
+//     if(err) throw err
+//     res.json({
+//       // field: req.body,
+//       // image: req.file
+//       msg: 'File Uploaded..!'
+//     })
+//   })
+// })
 
 module.exports = router;
