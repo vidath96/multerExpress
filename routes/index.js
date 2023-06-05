@@ -2,15 +2,36 @@ var express = require('express');
 var router = express.Router();
 const multer = require('multer')
 const upload = multer({dest:"public/images"})
+const fs = require('fs')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/fileformsub',upload.single('avatar'),(req, res, next) => {
+router.post('/fileformsub',upload.single('file'),(req, res, next) => {
+  let oldPath = req.file.path
+  let newPath = `public/images/uploads/${req.file.originalname}${Date.now()}`
+  fs.rename(oldPath,newPath,()=>{
+    res.json({
+      // field: req.body,
+      // image: req.file
+      msg: 'File Uploaded..!'
+    })
+  })
+})
 
-  res.json(req.body)
+router.post('/mulfileformsub',upload.fields('mulfile'),(req, res, next) => {
+  let oldPath = req.files.path
+  let newPath = `public/images/uploads/${req.file.originalname}${Date.now()}`
+  let mulnewPath = `public/images/uploads/multiple/${req.files.originalname}${Date.now()}`
+  fs.rename(oldPath,newPath,()=>{
+    res.json({
+      // field: req.body,
+      // image: req.file
+      msg: 'File Uploaded..!'
+    })
+  })
 })
 
 module.exports = router;
